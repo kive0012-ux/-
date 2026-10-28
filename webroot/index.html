@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ColorOS 日用增强</title>
+<style>
+:root{
+  --bg:#0b0d10;--bg2:#101318;
+  --card:#151920;--card2:#1b2028;--line:#262c35;
+  --fg:#eef1f5;--mut:#8b939e;--dim:#5c6572;
+  --blue:#5b8cff;--teal:#38d9b0;--amber:#ffc861;--red:#ff6b6b;
+  --grad:linear-gradient(135deg,#5b8cff 0%,#38d9b0 100%);
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,"OPPO Sans","HarmonyOS Sans",Roboto,"Noto Sans SC",sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding:18px 16px calc(92px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(900px 420px at 110% -10%,rgba(91,140,255,.16),transparent 60%),
+    radial-gradient(700px 380px at -10% 0%,rgba(56,217,176,.12),transparent 55%),
+    var(--bg)}
+header{display:flex;align-items:center;gap:12px;margin:2px 0 18px}
+.mark{width:42px;height:42px;border-radius:14px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(91,140,255,.28)}
+.mark svg{width:22px;height:22px}
+.htext{flex:1;min-width:0}
+.htext h1{font-size:18px;margin:0;font-weight:650;letter-spacing:.01em}
+.htext p{margin:2px 0 0;font-size:12px;color:var(--mut)}
+.chip{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:999px;
+  padding:3px 9px;background:rgba(255,255,255,.02)}
+.hero{position:relative;border-radius:22px;padding:18px;margin-bottom:16px;overflow:hidden;
+  background:linear-gradient(150deg,rgba(91,140,255,.16),rgba(56,217,176,.10) 55%,rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.08)}
+.hero::after{content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;
+  border-radius:50%;background:radial-gradient(circle,rgba(91,140,255,.35),transparent 65%)}
+.hero h2{margin:0 0 4px;font-size:16px;font-weight:650}
+.hero p{margin:0;color:#c8d0dc;font-size:12.5px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.tile{background:rgba(10,13,18,.55);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:11px 12px}
+.tile .t{font-size:11px;color:var(--mut)}
+.tile .v{font-size:14px;font-weight:600;margin-top:2px}
+.tile .v.ok{color:var(--teal)} .tile .v.off{color:var(--dim)} .tile .v.mid{color:var(--amber)}
+.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);
+  border-radius:var(--r);padding:6px 14px;margin-bottom:14px}
+.sec{font-size:12px;color:var(--mut);margin:16px 4px 8px;letter-spacing:.04em}
+.row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .txt{flex:1;min-width:0}
+.row .k{font-size:14.5px}
+.row .d{font-size:11.5px;color:var(--mut);margin-top:1px}
+.sw{position:relative;width:48px;height:28px;flex:none}
+.sw input{position:absolute;opacity:0;width:0;height:0}
+.track{position:absolute;inset:0;border-radius:999px;background:#2a3038;
+  transition:background .18s ease}
+.track::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#fff;transition:transform .18s cubic-bezier(.2,.9,.3,1);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.sw input:checked + .track{background:var(--grad)}
+.sw input:checked + .track::after{transform:translateX(20px)}
+.seg{display:flex;background:#0e1217;border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;border-radius:9px;background:transparent;color:var(--mut);
+  padding:7px 4px;font-size:12.5px;transition:background .18s,color .18s}
+.seg button.on{background:rgba(91,140,255,.16);color:#cfe0ff;font-weight:600}
+.btn{width:100%;border-radius:13px;border:1px solid var(--line);background:#1a2028;color:var(--fg);
+  padding:12px 14px;font-size:14px;transition:transform .12s,background .18s}
+.btn:active{transform:scale(.985);background:#212a34}
+.btn.primary{background:var(--grad);border:0;color:#08111f;font-weight:650}
+.btn.danger{background:rgba(255,107,107,.10);border-color:rgba(255,107,107,.28);color:#ff9c9c}
+.btns{display:flex;gap:10px;margin:12px 0}
+.btns .btn{flex:1}
+.field{margin:10px 0 4px}
+.field label{font-size:12px;color:var(--mut);display:block;margin-bottom:6px}
+input[type=text],select{width:100%;background:#0e1217;border:1px solid var(--line);border-radius:12px;
+  color:var(--fg);padding:11px 12px;font:inherit;font-size:14px;outline:none}
+input[type=text]:focus,select:focus{border-color:rgba(91,140,255,.5)}
+.hint{font-size:11.5px;color:var(--dim);margin:8px 4px 0;line-height:1.6}
+.tab{display:none;animation:in .22s ease}
+.tab.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:8;display:flex;
+  background:rgba(13,16,20,.96);border-top:1px solid var(--line);
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+nav button{flex:1;border:0;background:none;border-radius:12px;padding:7px 0 6px;color:var(--dim);font-size:11px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;transition:color .18s}
+nav button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7}
+nav button.on{color:var(--blue)}
+#toast{position:fixed;left:50%;bottom:calc(104px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(8px);
+  background:#20262e;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;
+  pointer-events:none;transition:opacity .2s,transform .2s;z-index:9;max-width:84%;text-align:center;
+  border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#sheet{position:fixed;inset:0;background:rgba(4,6,9,.6);display:none;z-index:10;
+  align-items:flex-end;justify-content:center;padding:0}
+#sheet.show{display:flex}
+.sheetbox{width:100%;max-height:78%;background:var(--card);border-radius:20px 20px 0 0;
+  border-top:1px solid var(--line);padding:14px 16px calc(18px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;animation:up .24s ease}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.sheethead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sheethead b{font-size:14px}
+.sheethead button{background:none;border:0;color:var(--blue);font-size:13px}
+pre{margin:0;flex:1;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;
+  color:#bfc7d2;white-space:pre-wrap;background:#0d1116;border:1px solid var(--line);border-radius:12px;padding:10px}
+.banner{display:none;margin-bottom:14px;padding:11px 13px;border-radius:13px;font-size:12px;
+  background:rgba(255,200,97,.08);border:1px solid rgba(255,200,97,.3);color:#ffd98d}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#08111f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 14a8 8 0 0 1 16 0"/><path d="M7 14v3M17 14v3M12 11v6"/>
+    </svg>
+  </div>
+  <div class="htext">
+    <h1>ColorOS 日用增强</h1>
+    <p>音质 · 触控 · 推送 · 云控</p>
+  </div>
+  <span class="chip" id="ver">v1.0</span>
+</header>
+
+<div class="banner" id="banner">未检测到模块命令桥。请在 KernelSU / APatch / MMRL 中打开本页；官方 Magisk App 请用 action.sh。</div>
+
+<!-- 首页 -->
+<section class="tab on" id="tab-home">
+  <div class="hero">
+    <h2>一切就绪</h2>
+    <p>所有改动都可单独关闭，属性先备份后写入，一键即可还原。</p>
+    <div class="tiles">
+      <div class="tile"><div class="t">推送保活</div><div class="v" id="t-push">-</div></div>
+      <div class="tile"><div class="t">音质增强</div><div class="v" id="t-audio">-</div></div>
+      <div class="tile"><div class="t">触控档位</div><div class="v" id="t-touch">-</div></div>
+      <div class="tile"><div class="t">云控屏蔽</div><div class="v" id="t-cloud">-</div></div>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="btn primary" onclick="applyNow()">立即应用</button>
+    <button class="btn" onclick="refresh()">刷新状态</button>
+  </div>
+  <div class="btns">
+    <button class="btn" onclick="openLog()">运行日志</button>
+  </div>
+
+  <div class="card">
+    <div class="row"><div class="txt"><div class="k">开机完成</div><div class="d">系统是否已完成启动</div></div><div class="v" id="s-boot">-</div></div>
+    <div class="row"><div class="txt"><div class="k">保活白名单</div><div class="d">当前命中的 GMS / 推送包</div></div><div class="v" id="s-wl">-</div></div>
+    <div class="row"><div class="txt"><div class="k">杜比组件</div><div class="d">本机是否检测到 Dolby/DAX</div></div><div class="v" id="s-dolby">-</div></div>
+    <div class="row"><div class="txt"><div class="k">扬声器控件</div><div class="d">已接管的外放增益数量</div></div><div class="v" id="s-mixer">-</div></div>
+  </div>
+  <p class="hint">不常驻后台、不禁用任何 App。切换云控/域名属于 hosts 层，重启后完全生效。</p>
+</section>
+
+<!-- 推送 -->
+<section class="tab" id="tab-push">
+  <div class="sec">推送保活</div>
+  <div class="card" id="pushList"></div>
+
+  <div class="sec">深度优化</div>
+  <div class="card">
+    <div class="row"><div class="txt"><div class="k">深度保活</div><div class="d">自动启动 + active 待机桶 + 数据节流白名单</div></div>
+      <label class="sw"><input id="sw-deep" type="checkbox" onchange="setKey('DEEP_PUSH',this.checked?'true':'false')"><span class="track"></span></label></div>
+    <div class="row"><div class="txt"><div class="k">轻量看门狗</div><div class="d">仅补缺失的白名单，不做其它动作</div></div>
+      <label class="sw"><input id="sw-wd" type="checkbox" onchange="setKey('WATCHDOG',this.checked?'true':'false')"><span class="track"></span></label></div>
+  </div>
+
+  <div class="card">
+    <div class="field"><label>看门狗间隔</label>
+      <select id="interval">
+        <option value="600">600 秒</option>
+        <option value="900">900 秒（推荐）</option>
+        <option value="1800">1800 秒</option>
+      </select>
+    </div>
+    <div class="field"><label>自定义包名（空格分隔，可留空）</label>
+      <input id="extra" type="text" placeholder="com.example.app">
+    </div>
+    <div class="btns"><button class="btn primary" onclick="savePush()">保存并应用</button></div>
+  </div>
+  <p class="hint">深度保活会放宽后台限制，耗电略增；如果只在意 GMS，可关掉 OPPO 推送。</p>
+</section>
+
+<!-- 音质 -->
+<section class="tab" id="tab-audio">
+  <div class="sec">外放</div>
+  <div class="card">
+    <div class="row"><div class="txt"><div class="k">音质增强</div><div class="d">重采样质量 + 扬声器增益，仅外放</div></div>
+      <label class="sw"><input id="sw-audio" type="checkbox" onchange="setKey('AUDIO_ENHANCE',this.checked?'true':'false')"><span class="track"></span></label></div>
+    <div class="row"><div class="txt"><div class="k">增益档位</div><div class="d">温和 +4%，增强 +8%，自动按控件上限钳制</div></div></div>
+    <div class="seg" id="seg-audio">
+      <button data-v="soft" onclick="setLevel('AUDIO_LEVEL','soft')">温和</button>
+      <button data-v="strong" onclick="setLevel('AUDIO_LEVEL','strong')">增强</button>
+    </div>
+  </div>
+
+  <div class="sec">杜比 / DAX</div>
+  <div class="card">
+    <div class="row"><div class="txt"><div class="k">杜比音效</div><div class="d">仅在本机检测到杜比组件时点亮，不覆盖任何 XML</div></div>
+      <label class="sw"><input id="sw-dolby" type="checkbox" onchange="setKey('DOLBY_ENHANCE',this.checked?'true':'false')"><span class="track"></span></label></div>
+  </div>
+  <p class="hint">本模块不修改任何 offload/蓝牙/编解码属性，也不写杜比配置文件，避免出现无声与杂音。</p>
+</section>
+
+<!-- 更多 -->
+<section class="tab" id="tab-more">
+  <div class="sec">触控</div>
+  <div class="card">
+    <div class="row"><div class="txt"><div class="k">触控增强</div><div class="d">事件吞吐与滑动惯性，跟手不硬改采样率</div></div>
+      <label class="sw"><input id="sw-touch" type="checkbox" onchange="setKey('TOUCH_ENHANCE',this.checked?'true':'false')"><span class="track"></span></label></div>
+    <div class="seg" id="seg-touch">
+      <button data-v="soft" onclick="setLevel('TOUCH_LEVEL','soft')">日常</button>
+      <button data-v="strong" onclick="setLevel('TOUCH_LEVEL','strong')">竞技</button>
+    </div>
+  </div>
+
+  <div class="sec">云控</div>
+  <div class="card">
+    <div class="row"><div class="txt"><div class="k">屏蔽云控域名</div><div class="d">hosts 层屏蔽下发域名，不冻结目录、不禁用 App</div></div>
+      <label class="sw"><input id="sw-cloud" type="checkbox" onchange="setKey('BLOCK_CLOUD',this.checked?'true':'false')"><span class="track"></span></label></div>
+  </div>
+  <p class="hint">切换后需重启才能完全生效（hosts 在开机时挂载）。</p>
+
+  <div class="sec">恢复</div>
+  <div class="card">
+    <div class="btns"><button class="btn danger" onclick="factoryReset()">一键恢复正常</button></div>
+    <div class="btns"><button class="btn" onclick="restoreOnly()">仅还原属性</button></div>
+  </div>
+
+  <div class="sec">关于</div>
+  <div class="card">
+    <div class="row"><div class="txt"><div class="k">模块 ID</div></div><div class="v" style="color:var(--mut)">zzz-gms-intl-optimizer</div></div>
+    <div class="row"><div class="txt"><div class="k">兼容</div></div><div class="v" style="color:var(--mut)">KernelSU / Magisk / APatch</div></div>
+    <div class="row"><div class="txt"><div class="k">在线更新</div></div><div class="v" style="color:var(--mut)">管理器下拉刷新</div></div>
+  </div>
+</section>
+
+<nav>
+  <button class="on" data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>首页</button>
+  <button data-tab="push"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 1 6 6v4l2 3H4l2-3V9a6 6 0 0 1 6-6z"/><path d="M9 19a3 3 0 0 0 6 0"/></svg>推送</button>
+  <button data-tab="audio"><svg viewBox="0 0 24 24"><path d="M4 10v4M8 6v12M12 4v16M16 7v10M20 10v4"/></svg>音质</button>
+  <button data-tab="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>更多</button>
+</nav>
+
+<div id="toast"></div>
+<div id="sheet">
+  <div class="sheetbox">
+    <div class="sheethead"><b>运行日志</b><div><button onclick="openLog(true)">刷新</button><button onclick="closeSheet()" style="margin-left:14px">关闭</button></div></div>
+    <pre id="logText">-</pre>
+  </div>
+</div>
+
+<script>
+var MODID='zzz-gms-intl-optimizer';
+var MODDIR='/data/adb/modules/'+MODID;
+var BRIDGE=(function(){
+  try{if(typeof ksu!=='undefined')return 'ksu';}catch(e){}
+  try{if(typeof action==='function')return 'magisk';}catch(e){}
+  return null;
+})();
+
+var DEFAULTS={PUSH_GMS:'true',PUSH_OPPO:'true',DEEP_PUSH:'true',WATCHDOG:'false',WATCHDOG_INTERVAL:'900',
+  AUDIO_ENHANCE:'true',AUDIO_LEVEL:'soft',DOLBY_ENHANCE:'true',
+  TOUCH_ENHANCE:'true',TOUCH_LEVEL:'soft',BLOCK_CLOUD:'true',EXTRA_PKGS:''};
+var cfg={};
+
+function q(s){return "'"+String(s).replace(/'/g,"'\\''")+"'";}
+
+function ksuExec(cmd){
+  return new Promise(function(res,rej){
+    var cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*1e5);
+    window[cb]=function(){
+      var errno=arguments[0],out=arguments[1];
+      if(typeof errno!=='number'){out=arguments[0];errno=0;}
+      delete window[cb];
+      errno?rej('errno='+errno):res(String(out||''));
+    };
+    try{ksu.exec(cmd,'{}',cb);}catch(e){delete window[cb];rej(e);}
+  });
+}
+
+function call(cmd){
+  var args=Array.prototype.slice.call(arguments,1);
+  if(BRIDGE==='ksu'){
+    return ksuExec('sh '+MODDIR+'/action.sh '+[cmd].concat(args).map(q).join(' '));
+  }
+  if(BRIDGE==='magisk')return Promise.resolve(action.apply(null,[cmd].concat(args)));
+  return Promise.reject('no-bridge');
+}
+
+function toast(t){
+  var el=document.getElementById('toast');
+  el.textContent=t;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},1700);
+}
+
+var PUSHES=[['PUSH_GMS','GMS / FCM','Google 服务与消息长连接'],
+            ['PUSH_OPPO','OPPO 推送','HeyTap / ColorOS 推送通道']];
+
+function mkSwitch(key,title,desc){
+  var d=document.createElement('div');d.className='row';
+  var on=cfg[key]==='true';
+  d.innerHTML='<div class="txt"><div class="k">'+title+'</div><div class="d">'+desc+'</div></div>'+
+    '<label class="sw"><input type="checkbox"'+(on?' checked':'')+'><span class="track"></span></label>';
+  var cb=d.querySelector('input');
+  cb.onchange=function(){setKey(key,cb.checked?'true':'false');};
+  return d;
+}
+
+function render(){
+  var box=document.getElementById('pushList');box.textContent='';
+  PUSHES.forEach(function(o){box.appendChild(mkSwitch(o[0],o[1],o[2]));});
+
+  bind('sw-deep','DEEP_PUSH');bind('sw-wd','WATCHDOG');
+  bind('sw-audio','AUDIO_ENHANCE');bind('sw-dolby','DOLBY_ENHANCE');
+  bind('sw-touch','TOUCH_ENHANCE');bind('sw-cloud','BLOCK_CLOUD');
+
+  document.getElementById('interval').value=cfg.WATCHDOG_INTERVAL||'900';
+  document.getElementById('extra').value=cfg.EXTRA_PKGS||'';
+  markSeg('seg-audio','AUDIO_LEVEL',cfg.AUDIO_LEVEL);
+  markSeg('seg-touch','TOUCH_LEVEL',cfg.TOUCH_LEVEL);
+  renderTiles();
+}
+
+function bind(id,key){var el=document.getElementById(id);if(el)el.checked=cfg[key]==='true';}
+function markSeg(id,key,val){
+  var btns=document.querySelectorAll('#'+id+' button');
+  btns.forEach(function(b){b.classList.toggle('on',b.dataset.v===(val||'soft'));});
+}
+
+function renderTiles(){
+  var p=(cfg.PUSH_GMS==='true'||cfg.PUSH_OPPO==='true');
+  setTile('t-push',p?'已开启':'已关闭',p?'ok':'off');
+  setTile('t-audio',cfg.AUDIO_ENHANCE==='true'?(cfg.AUDIO_LEVEL==='strong'?'增强':'温和'):'已关闭',
+    cfg.AUDIO_ENHANCE==='true'?'ok':'off');
+  setTile('t-touch',cfg.TOUCH_ENHANCE==='true'?(cfg.TOUCH_LEVEL==='strong'?'竞技':'日常'):'已关闭',
+    cfg.TOUCH_ENHANCE==='true'?'ok':'off');
+  setTile('t-cloud',cfg.BLOCK_CLOUD==='true'?'已屏蔽':'未屏蔽',cfg.BLOCK_CLOUD==='true'?'mid':'off');
+}
+function setTile(id,txt,cls){
+  var el=document.getElementById(id);if(!el)return;
+  el.textContent=txt;el.className='v '+cls;
+}
+
+function setKey(k,v){
+  call('set',k,v).then(function(r){
+    var j;try{j=JSON.parse(r);}catch(e){toast('返回异常');return;}
+    if(j.status==='ok'){cfg[k]=v;render();toast('已应用');refresh();}
+    else toast('失败：'+(j.msg||''));
+  }).catch(function(){toast('无法连接模块');});
+}
+
+function setLevel(k,v){setKey(k,v);}
+
+function savePush(){
+  var ex=document.getElementById('extra').value.trim();
+  var iv=document.getElementById('interval').value;
+  call('set','EXTRA_PKGS',ex,'quiet')
+    .then(function(){return call('set','WATCHDOG_INTERVAL',iv,'quiet');})
+    .then(function(){return call('apply');})
+    .then(function(){cfg.EXTRA_PKGS=ex;cfg.WATCHDOG_INTERVAL=iv;toast('已保存并应用');refresh();})
+    .catch(function(){toast('保存失败');});
+}
+
+function applyNow(){call('apply').then(function(){toast('已应用');refresh();}).catch(function(){toast('失败');});}
+
+function refresh(){
+  call('status').then(function(r){
+    var j;try{j=JSON.parse(r);}catch(e){return;}
+    document.getElementById('s-boot').textContent=(j.boot==='1'?'已完成':'未完成');
+    document.getElementById('s-wl').textContent=(j.whitelist||0)+' 项';
+    document.getElementById('s-dolby').textContent=(j.dolby==='1'?'已检测':'未检测');
+    document.getElementById('s-mixer').textContent=(j.mixer||0)+' 项';
+    document.getElementById('ver').textContent='v'+(j.version||'1.0');
+  }).catch(function(){});
+}
+
+function factoryReset(){
+  if(!confirm('一键恢复正常？\n\n将关闭全部功能、撤销白名单与 appops、还原属性/音质/触控，并清空 hosts。模块仍保留安装。'))return;
+  call('factory_reset').then(function(){toast('已恢复，建议重启');load(true);})
+    .catch(function(){toast('执行失败');});
+}
+function restoreOnly(){
+  if(!confirm('仅还原本模块改过的属性与音质/触控设置？'))return;
+  call('restore').then(function(){toast('已还原，建议重启');load(true);}).catch(function(){toast('执行失败');});
+}
+
+function openLog(refreshOnly){
+  call('log').then(function(t){document.getElementById('logText').textContent=t||'(空)';})
+    .catch(function(){document.getElementById('logText').textContent='无法读取日志';});
+  if(!refreshOnly)document.getElementById('sheet').classList.add('show');
+}
+function closeSheet(){document.getElementById('sheet').classList.remove('show');}
+
+function load(silent){
+  if(!BRIDGE){
+    cfg=Object.assign({},DEFAULTS);render();
+    document.getElementById('banner').style.display='block';
+    return Promise.resolve();
+  }
+  return call('get').then(function(r){
+    cfg=JSON.parse(r);render();refresh();
+    if(!silent)toast('配置已读取');
+  }).catch(function(){
+    cfg=Object.assign({},DEFAULTS);render();
+    document.getElementById('banner').style.display='block';
+  });
+}
+
+document.querySelectorAll('nav button').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('nav button').forEach(function(x){x.classList.remove('on');});
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    document.getElementById('tab-'+b.dataset.tab).classList.add('on');
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+});
+document.getElementById('sheet').addEventListener('click',function(e){
+  if(e.target===this)closeSheet();
+});
+
+load();
+</script>
+</body>
+</html>

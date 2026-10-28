@@ -1,0 +1,7 @@
+id=zzz-gms-intl-optimizer
+name=ColorOS 日用增强
+version=1.0
+versionCode=100
+author=看见美女就想要
+description=音质/杜比音效优化 · 触控跟手增强 · GMS 与 OPPO 推送深度保活 · 云控域名屏蔽（禁用零个 App）。属性全部先备份后修改，可一键还原。UI 全新设计，轻量不卡顿。
+updateJson=https://raw.githubusercontent.com/kive0012-ux/-/main/update.json
