@@ -36,6 +36,7 @@ start_watchdog() {
     while true; do
       sleep "$iv"
       . "$MODDIR/config.sh" 2>/dev/null
+      [ "$WATCHDOG" = "true" ] || break
       iv=${WATCHDOG_INTERVAL:-900}
       [ "$iv" -lt 300 ] 2>/dev/null && iv=300
       build_pkg_list
@@ -56,6 +57,7 @@ apply_all() {
   apply_touch
   apply_audio
   apply_push
+  [ "$WATCHDOG" = "true" ] || stop_watchdog
   start_watchdog
   log svc "apply done"
 }

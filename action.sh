@@ -23,6 +23,22 @@ valid_val() {
   return 0
 }
 
+# 按 key 做枚举/数值校验，避免写入无意义的值（例如 AUDIO_LEVEL=abc、间隔=sleep）
+valid_pair() {
+  case "$1" in
+    PUSH_GMS|PUSH_OPPO|DEEP_PUSH|WATCHDOG|AUDIO_ENHANCE|DOLBY_ENHANCE|TOUCH_ENHANCE|BLOCK_CLOUD)
+      case "$2" in true|false) return 0 ;; *) return 1 ;; esac ;;
+    AUDIO_LEVEL|TOUCH_LEVEL)
+      case "$2" in soft|strong) return 0 ;; *) return 1 ;; esac ;;
+    WATCHDOG_INTERVAL)
+      case "$2" in ''|*[!0-9]*) return 1 ;; esac
+      [ "$2" -ge 300 ] 2>/dev/null && [ "$2" -le 86400 ] 2>/dev/null || return 1
+      return 0 ;;
+    EXTRA_PKGS) return 0 ;;
+  esac
+  return 1
+}
+
 cmd="$1"; shift
 case "$cmd" in
   get)
@@ -35,6 +51,7 @@ EOF
     key="$1"; val="$2"
     echo "$ALLOWED" | tr ' ' '\n' | grep -qx "$key" || { echo '{"status":"error","msg":"未知键"}'; exit 1; }
     valid_val "$val" || { echo '{"status":"error","msg":"值含非法字符"}'; exit 1; }
+    valid_pair "$key" "$val" || { echo '{"status":"error","msg":"值不符合该开关的允许范围"}'; exit 1; }
     awk -v k="$key" -v v="$val" '$0 ~ "^"k"=" {print k"=\""v"\""; next} {print}' \
       "$MODDIR/config.sh" > "$MODDIR/config.sh.tmp" && mv "$MODDIR/config.sh.tmp" "$MODDIR/config.sh"
     . "$MODDIR/config.sh"
@@ -68,6 +85,7 @@ EOF
   log) cat "$LOG" 2>/dev/null || echo "(无日志)" ;;
 
   restore)
+    restore_speaker >/dev/null 2>&1
     restore_all_props >/dev/null 2>&1
     rm -f "$STATE_DIR/mixer.list" "$STATE_DIR/touch.level" "$STATE_DIR/dolby.detected" 2>/dev/null
     echo '{"status":"ok","msg":"属性/音质/触控已还原，建议重启"}'
@@ -102,10 +120,7 @@ EOF
     BLOCK_CLOUD=false build_hosts
 
     # 停看门狗
-    if [ -f /dev/.coloros_power_wd ]; then
-      kill "$(cat /dev/.coloros_power_wd 2>/dev/null)" 2>/dev/null
-      rm -f /dev/.coloros_power_wd 2>/dev/null
-    fi
+    stop_watchdog
     echo '{"status":"ok","msg":"已恢复正常（建议重启一次）"}'
     ;;
 

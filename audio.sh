@@ -17,7 +17,7 @@ detect_spk() {
   "$tm" 2>/dev/null \
     | grep -iE 'SPK|SPEAKER' \
     | grep -iE 'GAIN|VOLUME|VOL' \
-    | grep -viE 'HPH|HEAD|EARPIECE|EAR_|HANDSET|HEADSET|BT|A2DP|USB|MIC|CAPTURE|REC|VOICE|RX_|LINE|SWITCH' \
+    | grep -viE 'HPH|HEAD|EARPIECE|EAR_|HANDSET|HEADSET|BT|A2DP|USB|MIC|CAPTURE|REC|VOICE|RX_|LINE|SWITCH|MAX|LIMIT|THRESH|MIN|CEILING' \
     | awk '{
         id=$1; gsub(/[^0-9]/,"",id);
         sep=0; for(i=1;i<=NF;i++) if($i ~ /^\(/) {sep=i;break}
@@ -55,6 +55,7 @@ apply_speaker() {
     [ "$nv" -le "$orig" ] && nv=$(( orig + 1 ))
     max=$(ctrl_max "$tm" "$id")
     if [ -n "$max" ] && [ "$max" -gt 0 ] && [ "$nv" -gt "$max" ]; then nv=$max; fi
+    [ "$nv" -eq "$orig" ] && continue   # 已到上限，无需写入
     "$tm" "$id" "$nv" >/dev/null 2>&1 && n=$((n + 1))
   done < "$MIX_BAK"
   aud_log "speaker gain +${pct}% on $n control(s)"

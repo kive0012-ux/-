@@ -7,7 +7,15 @@ STATE_DIR="${STATE_DIR:-/data/adb/coloros_power}"
 LOG="${LOG:-/data/local/tmp/coloros_power.log}"
 LEGACY_DIR="/data/adb/gms_intl_opt"
 PROPS="$STATE_DIR/props.list"
+WD_MARK="${WD_MARK:-/dev/.coloros_power_wd}"
 mkdir -p "$STATE_DIR" 2>/dev/null
+
+stop_watchdog() {
+  [ -f "$WD_MARK" ] || return 0
+  _p=$(cat "$WD_MARK" 2>/dev/null)
+  [ -n "$_p" ] && kill "$_p" 2>/dev/null
+  rm -f "$WD_MARK" 2>/dev/null
+}
 
 if command -v resetprop >/dev/null 2>&1; then RP=resetprop; else RP=setprop; fi
 
@@ -23,8 +31,12 @@ prop_set() {
 prop_del() {
   if [ "$RP" = "resetprop" ]; then resetprop --delete "$1" 2>/dev/null; else setprop "$1" "" 2>/dev/null; fi
 }
+# 属性名含 . 等正则元字符，grep/sed 前先转义，避免误匹配到别的键
+_esc() { echo "$1" | sed 's/[.[\*^$]/\\&/g'; }
+
 record_prop() {
-  [ -f "$PROPS" ] && grep -q "^$1=" "$PROPS" 2>/dev/null && return 0
+  _k=$(_esc "$1")
+  [ -f "$PROPS" ] && grep -q "^$_k=" "$PROPS" 2>/dev/null && return 0
   echo "$1=$(prop_get "$1")" >> "$PROPS" 2>/dev/null
 }
 apply_prop() {
@@ -33,10 +45,11 @@ apply_prop() {
 }
 restore_prop() {
   [ -f "$PROPS" ] || return 0
-  grep -q "^$1=" "$PROPS" 2>/dev/null || return 0
-  _v=$(grep "^$1=" "$PROPS" | head -n1 | cut -d= -f2-)
+  _k=$(_esc "$1")
+  grep -q "^$_k=" "$PROPS" 2>/dev/null || return 0
+  _v=$(grep "^$_k=" "$PROPS" | head -n1 | cut -d= -f2-)
   if [ -n "$_v" ]; then prop_set "$1" "$_v"; else prop_del "$1"; fi
-  sed -i "\|^$1=|d" "$PROPS" 2>/dev/null
+  sed -i "\|^$_k=|d" "$PROPS" 2>/dev/null
 }
 restore_all_props() {
   [ -f "$PROPS" ] || return 1

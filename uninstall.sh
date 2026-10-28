@@ -11,10 +11,7 @@ case "$MODDIR" in ""|"$0") MODDIR=. ;; esac
 . "$MODDIR/push.sh"
 
 # 停看门狗
-if [ -f /dev/.coloros_power_wd ]; then
-  kill "$(cat /dev/.coloros_power_wd 2>/dev/null)" 2>/dev/null
-  rm -f /dev/.coloros_power_wd 2>/dev/null
-fi
+stop_watchdog
 
 drop_push_all
 restore_speaker
